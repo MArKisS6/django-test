@@ -29,6 +29,12 @@ class TestNoteCreation(TestCase):
             'text': cls.NOTE_TEXT,
             'slug': cls.NOTE_SLUG,
         }
+        Note.objects.create(
+            title=cls.NOTE_TITLE,
+            text=cls.NOTE_TEXT,
+            slug=cls.NOTE_SLUG,
+            author=cls.user,
+        )
 
     def test_anonymous_user_cant_create_note(self):
         """Аноним не может создать заметку."""
@@ -48,12 +54,6 @@ class TestNoteCreation(TestCase):
 
     def test_user_cant_use_duplicate_slug(self):
         """Нельзя создать заметку с неуникальным slug."""
-        Note.objects.create(
-            title='Первая заметка',
-            text='Текст',
-            slug=self.NOTE_SLUG,
-            author=self.user,
-        )
         response = self.auth_client.post(self.url, data=self.form_data)
         self.assertEqual(response.status_code, HTTPStatus.OK)
         form = response.context['form']
