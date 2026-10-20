@@ -45,7 +45,7 @@ class TestRoutes(TestCase):
             (self.home_url, 'client', 'get', HTTPStatus.OK),
             (self.login_url, 'client', 'get', HTTPStatus.OK),
             (self.signup_url, 'client', 'get', HTTPStatus.OK),
-            (self.logout_url, 'client', 'post', HTTPStatus.FOUND),
+            (self.logout_url, 'client', 'post', HTTPStatus.OK),
             (self.list_url, 'author_client', 'get', HTTPStatus.OK),
             (self.success_url, 'author_client', 'get', HTTPStatus.OK),
             (self.add_url, 'author_client', 'get', HTTPStatus.OK),

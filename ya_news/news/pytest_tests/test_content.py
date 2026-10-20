@@ -1,11 +1,7 @@
-import pytest
+from django.conf import settings
 from django.urls import reverse
 
 from news.forms import CommentForm
-from ya_news.yanews import settings
-
-
-pytestmark = pytest.mark.django_db
 
 
 def test_news_order(client, news_bulk):
@@ -16,6 +12,15 @@ def test_news_order(client, news_bulk):
     all_dates = [news.date for news in object_list]
     sorted_dates = sorted(all_dates, reverse=True)
     assert all_dates == sorted_dates
+
+
+def test_news_count_on_home_page(client, news_bulk):
+    """На главной не более NEWS_COUNT_ON_HOME_PAGE новостей."""
+    url = reverse('news:home')
+    response = client.get(url)
+    object_list = response.context['object_list']
+    news_count = len(object_list)
+    assert news_count <= settings.NEWS_COUNT_ON_HOME_PAGE
 
 
 def test_comments_order(client, news, comments):
@@ -43,12 +48,3 @@ def test_authorized_client_has_form(author_client, news, author):
     response = author_client.get(url)
     assert 'form' in response.context
     assert isinstance(response.context['form'], CommentForm)
-
-
-def test_news_count_on_home_page(client, news_bulk):
-    """На главной странице — не более NEWS_COUNT_ON_HOME_PAGE новостей."""
-    url = reverse('news:home')
-    response = client.get(url)
-    object_list = response.context['object_list']
-    news_count = len(object_list)
-    assert news_count <= settings.NEWS_COUNT_ON_HOME_PAGE

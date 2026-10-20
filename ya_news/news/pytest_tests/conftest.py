@@ -9,6 +9,12 @@ from django.utils import timezone
 from news.models import Comment, News
 
 
+@pytest.fixture(autouse=True)
+def enable_db_access_for_all_tests(db):
+    """Автоматически разрешает доступ к БД для всех тестов."""
+    pass
+
+
 @pytest.fixture
 def news():
     """Фикстура создаёт новость."""
@@ -54,12 +60,6 @@ def comment(news, author):
 
 
 @pytest.fixture
-def news_id_for_args(news):
-    """Возвращает кортеж с id новости для args в reverse."""
-    return (news.id,)
-
-
-@pytest.fixture
 def news_bulk():
     """Фикстура создаёт пакет новостей с разными датами."""
     today = datetime.today()
@@ -71,13 +71,13 @@ def news_bulk():
         )
         for index in range(settings.NEWS_COUNT_ON_HOME_PAGE + 1)
     ]
+    News.objects.bulk_create(all_news)
 
 
 @pytest.fixture
 def comments(news, author):
     """Фикстура создаёт 10 комментариев с разным временем."""
     now = timezone.now()
-    comments_list = []
     for index in range(10):
         comment = Comment.objects.create(
             news=news,
@@ -86,7 +86,6 @@ def comments(news, author):
         )
         comment.created = now + timedelta(days=index)
         comment.save()
-        comments_list.append(comment)
 
 
 @pytest.fixture
