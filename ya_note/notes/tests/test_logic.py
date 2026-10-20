@@ -38,22 +38,24 @@ class TestNoteCreation(TestCase):
 
     def test_anonymous_user_cant_create_note(self):
         """Аноним не может создать заметку."""
+        Note = self.note.objects
         self.client.post(self.url, data=self.form_data)
-        self.assertEqual(Note.objects.count(), 0)
+        self.assertEqual(Note.count(), 0)
 
     def test_user_can_create_note(self):
         """Авторизованный пользователь может создать заметку."""
         response = self.auth_client.post(self.url, data=self.form_data)
         self.assertRedirects(response, self.success_url)
         self.assertEqual(Note.objects.count(), 1)
-        note = Note.objects.get()
-        self.assertEqual(note.title, self.NOTE_TITLE)
-        self.assertEqual(note.text, self.NOTE_TEXT)
-        self.assertEqual(note.slug, self.NOTE_SLUG)
-        self.assertEqual(note.author, self.user)
+        Note = self.note.objects.get()
+        self.assertEqual(Note.title, self.NOTE_TITLE)
+        self.assertEqual(Note.text, self.NOTE_TEXT)
+        self.assertEqual(Note.slug, self.NOTE_SLUG)
+        self.assertEqual(Note.author, self.user)
 
     def test_user_cant_use_duplicate_slug(self):
         """Нельзя создать заметку с неуникальным slug."""
+        Note = self.note.objects
         response = self.auth_client.post(self.url, data=self.form_data)
         self.assertEqual(response.status_code, HTTPStatus.OK)
         form = response.context['form']
@@ -63,7 +65,7 @@ class TestNoteCreation(TestCase):
             'slug',
             self.NOTE_SLUG + WARNING,
         )
-        self.assertEqual(self.note.objects.count(), 1)
+        self.assertEqual(Note.count(), 1)
 
 
 class TestNoteEditDelete(TestCase):
