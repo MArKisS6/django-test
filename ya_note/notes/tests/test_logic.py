@@ -29,11 +29,11 @@ class TestNoteCreation(TestCase):
             'text': cls.NOTE_TEXT,
             'slug': cls.NOTE_SLUG,
         }
-        Note.objects.create(
+        cls.note = Note.objects.create(
             title=cls.NOTE_TITLE,
             text=cls.NOTE_TEXT,
             slug=cls.NOTE_SLUG,
-            author=cls.user,
+            author=cls.author,
         )
 
     def test_anonymous_user_cant_create_note(self):
