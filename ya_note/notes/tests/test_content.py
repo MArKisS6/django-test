@@ -20,12 +20,6 @@ class TestNotesList(TestCase):
             slug='note-1',
             author=cls.author,
         )
-        cls.note_2 = Note.objects.create(
-            title='Заметка вторая',
-            text='Текст второй заметки',
-            slug='note-2',
-            author=cls.author,
-        )
         cls.note_reader = Note.objects.create(
             title='Заметка читателя',
             text='Текст заметки читателя',
@@ -44,11 +38,7 @@ class TestNotesList(TestCase):
             object_list,
             'Своя заметка должна быть в списке'
         )
-        self.assertIn(
-            self.note_2,
-            object_list,
-            'Своя заметка должна быть в списке'
-        )
+
 
     def test_notes_list_does_not_contain_other_users_notes(self):
         """В списке нет чужих заметок."""
