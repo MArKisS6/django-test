@@ -71,7 +71,6 @@ def news_bulk():
         )
         for index in range(settings.NEWS_COUNT_ON_HOME_PAGE + 1)
     ]
-    return News.objects.bulk_create(all_news)
 
 
 @pytest.fixture
@@ -88,7 +87,6 @@ def comments(news, author):
         comment.created = now + timedelta(days=index)
         comment.save()
         comments_list.append(comment)
-    return comments_list
 
 
 @pytest.fixture
