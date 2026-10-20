@@ -63,7 +63,7 @@ class TestNoteCreation(TestCase):
             'slug',
             self.NOTE_SLUG + WARNING,
         )
-        self.assertEqual(Note.objects.count(), 1)
+        self.assertEqual(self.note.objects.count(), 1)
 
 
 class TestNoteEditDelete(TestCase):
