@@ -2,6 +2,8 @@ import pytest
 from django.urls import reverse
 
 from news.forms import CommentForm
+from ya_news.yanews import settings
+
 
 pytestmark = pytest.mark.django_db
 
