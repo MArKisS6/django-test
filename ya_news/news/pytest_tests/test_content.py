@@ -3,8 +3,9 @@ from django.urls import reverse
 
 from news.forms import CommentForm
 
+pytestmark = pytest.mark.django_db
 
-@pytest.mark.django_db
+
 def test_news_order(client, news_bulk):
     """Новости на главной отсортированы от свежих к старым."""
     url = reverse('news:home')
@@ -15,7 +16,6 @@ def test_news_order(client, news_bulk):
     assert all_dates == sorted_dates
 
 
-@pytest.mark.django_db
 def test_comments_order(client, news, comments):
     """Комментарии на странице новости — от старых к новым."""
     url = reverse('news:detail', args=(news.id,))
@@ -28,7 +28,6 @@ def test_comments_order(client, news, comments):
     assert all_timestamps == sorted_timestamps
 
 
-@pytest.mark.django_db
 def test_anonymous_client_has_no_form(client, news):
     """Аноним не видит форму комментария."""
     url = reverse('news:detail', args=(news.id,))
@@ -36,7 +35,6 @@ def test_anonymous_client_has_no_form(client, news):
     assert 'form' not in response.context
 
 
-@pytest.mark.django_db
 def test_authorized_client_has_form(author_client, news, author):
     """Авторизованный видит форму комментария."""
     url = reverse('news:detail', args=(news.id,))
