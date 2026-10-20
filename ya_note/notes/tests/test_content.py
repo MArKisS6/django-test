@@ -39,7 +39,6 @@ class TestNotesList(TestCase):
             'Своя заметка должна быть в списке'
         )
 
-
     def test_notes_list_does_not_contain_other_users_notes(self):
         """В списке нет чужих заметок."""
         self.client.force_login(self.author)
