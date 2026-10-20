@@ -33,7 +33,7 @@ class TestNoteCreation(TestCase):
             title=cls.NOTE_TITLE,
             text=cls.NOTE_TEXT,
             slug=cls.NOTE_SLUG,
-            author=cls.author,
+            author=cls.user,
         )
 
     def test_anonymous_user_cant_create_note(self):
