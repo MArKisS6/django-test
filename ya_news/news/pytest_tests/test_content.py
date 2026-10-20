@@ -41,3 +41,12 @@ def test_authorized_client_has_form(author_client, news, author):
     response = author_client.get(url)
     assert 'form' in response.context
     assert isinstance(response.context['form'], CommentForm)
+
+
+def test_news_count_on_home_page(client, news_bulk):
+    """На главной странице — не более NEWS_COUNT_ON_HOME_PAGE новостей."""
+    url = reverse('news:home')
+    response = client.get(url)
+    object_list = response.context['object_list']
+    news_count = len(object_list)
+    assert news_count <= settings.NEWS_COUNT_ON_HOME_PAGE
