@@ -1,78 +1,95 @@
 from django.contrib.auth import get_user_model
-from django.test import TestCase
+from django.test import Client, TestCase
 from django.urls import reverse
 
+from notes.forms import NoteForm
 from notes.models import Note
 
 User = get_user_model()
 
 
-class TestNotesList(TestCase):
-    """Тестируем страницу списка заметок."""
+class BaseTest(TestCase):
+    """Базовый класс с общими фикстурами и константами URL."""
+
+    AUTHOR_SLUG = 'note-author'
+    READER_SLUG = 'note-reader'
 
     @classmethod
     def setUpTestData(cls):
         cls.author = User.objects.create(username='Лев Толстой')
         cls.reader = User.objects.create(username='Читатель простой')
-        cls.note_1 = Note.objects.create(
-            title='Заметка первая',
-            text='Текст первой заметки',
-            slug='note-1',
+
+        cls.note_author = Note.objects.create(
+            title='Заметка автора',
+            text='Текст заметки автора',
+            slug=cls.AUTHOR_SLUG,
             author=cls.author,
         )
         cls.note_reader = Note.objects.create(
             title='Заметка читателя',
             text='Текст заметки читателя',
-            slug='note-reader',
+            slug=cls.READER_SLUG,
             author=cls.reader,
         )
 
-    def test_notes_list_contains_all_author_notes(self):
-        """В списке — все заметки автора."""
-        self.client.force_login(self.author)
-        url = reverse('notes:list')
-        response = self.client.get(url)
-        object_list = response.context['object_list']
-        self.assertIn(
-            self.note_1,
-            object_list,
-            'Своя заметка должна быть в списке'
+        cls.author_client = Client()
+        cls.author_client.force_login(cls.author)
+        cls.reader_client = Client()
+        cls.reader_client.force_login(cls.reader)
+
+        cls.home_url = reverse('notes:home')
+        cls.login_url = reverse('users:login')
+        cls.logout_url = reverse('users:logout')
+        cls.signup_url = reverse('users:signup')
+        cls.list_url = reverse('notes:list')
+        cls.success_url = reverse('notes:success')
+        cls.add_url = reverse('notes:add')
+        cls.detail_author_url = reverse(
+            'notes:detail', args=(cls.AUTHOR_SLUG,)
+        )
+        cls.detail_reader_url = reverse(
+            'notes:detail', args=(cls.READER_SLUG,)
+        )
+        cls.edit_author_url = reverse(
+            'notes:edit', args=(cls.AUTHOR_SLUG,)
+        )
+        cls.edit_reader_url = reverse(
+            'notes:edit', args=(cls.READER_SLUG,)
+        )
+        cls.delete_author_url = reverse(
+            'notes:delete', args=(cls.AUTHOR_SLUG,)
+        )
+        cls.delete_reader_url = reverse(
+            'notes:delete', args=(cls.READER_SLUG,)
         )
 
-    def test_notes_list_does_not_contain_other_users_notes(self):
-        """В списке нет чужих заметок."""
-        self.client.force_login(self.author)
-        url = reverse('notes:list')
-        response = self.client.get(url)
-        object_list = response.context['object_list']
-        self.assertNotIn(
-            self.note_reader,
-            object_list,
-            'Чужая заметка не должна быть в списке'
+
+class TestNotesList(BaseTest):
+    """Тестируем страницу списка заметок."""
+
+    def test_notes_list_for_different_users(self):
+        """Список содержит только заметки текущего пользователя."""
+        cases = (
+            (self.author_client, self.note_author, True),
+            (self.author_client, self.note_reader, False),
+            (self.reader_client, self.note_reader, True),
+            (self.reader_client, self.note_author, False),
         )
+        for client, note, expected in cases:
+            with self.subTest(client=client, note=note):
+                response = client.get(self.list_url)
+                object_list = response.context['object_list']
+                self.assertEqual(note in object_list, expected)
 
 
-class TestNoteDetail(TestCase):
-    """Тестируем страницу отдельной заметки."""
+class TestNoteForm(BaseTest):
+    """Тестируем наличие формы на страницах создания и редактирования."""
 
-    @classmethod
-    def setUpTestData(cls):
-        cls.author = User.objects.create(username='Лев Толстой')
-        cls.note = Note.objects.create(
-            title='Заголовок заметки',
-            text='Текст заметки',
-            slug='test-note',
-            author=cls.author,
-        )
-
-    def test_note_detail_shows_note_object(self):
-        """В контексте — запрошенная заметка."""
-        self.client.force_login(self.author)
-        url = reverse('notes:detail', args=(self.note.slug,))
-        response = self.client.get(url)
-        self.assertIn('note', response.context)
-        self.assertEqual(
-            response.context['note'],
-            self.note,
-            'В контексте должна быть запрошенная заметка'
-        )
+    def test_pages_contains_form(self):
+        """На страницах создания и редактирования есть форма."""
+        urls = (self.add_url, self.edit_author_url)
+        for url in urls:
+            with self.subTest(url=url):
+                response = self.author_client.get(url)
+                self.assertIn('form', response.context)
+                self.assertIsInstance(response.context['form'], NoteForm)
