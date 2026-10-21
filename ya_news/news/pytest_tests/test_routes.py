@@ -22,16 +22,40 @@ def test_pages_availability(client, url):
     'url, parametrized_client, method, expected_status',
     (
         (pytest.lazy_fixture('home_url'), 'client', 'get', HTTPStatus.OK),
-        (pytest.lazy_fixture('news_detail_url'), 'client', 'get', HTTPStatus.OK),
+        (
+            pytest.lazy_fixture('news_detail_url'),
+            'client', 'get', HTTPStatus.OK,
+        ),
         (pytest.lazy_fixture('login_url'), 'client', 'get', HTTPStatus.OK),
         (pytest.lazy_fixture('signup_url'), 'client', 'get', HTTPStatus.OK),
-        (pytest.lazy_fixture('logout_url'), 'client', 'post', HTTPStatus.FOUND),
-        (pytest.lazy_fixture('comment_edit_url'), 'author_client', 'get', HTTPStatus.OK),
-        (pytest.lazy_fixture('comment_delete_url'), 'author_client', 'get', HTTPStatus.OK),
-        (pytest.lazy_fixture('comment_edit_url'), 'reader_client', 'get', HTTPStatus.NOT_FOUND),
-        (pytest.lazy_fixture('comment_delete_url'), 'reader_client', 'get', HTTPStatus.NOT_FOUND),
-        (pytest.lazy_fixture('comment_edit_url'), 'client', 'get', HTTPStatus.FOUND),
-        (pytest.lazy_fixture('comment_delete_url'), 'client', 'get', HTTPStatus.FOUND),
+        (
+            pytest.lazy_fixture('logout_url'),
+            'client', 'post', HTTPStatus.FOUND,
+        ),
+        (
+            pytest.lazy_fixture('comment_edit_url'),
+            'author_client', 'get', HTTPStatus.OK,
+        ),
+        (
+            pytest.lazy_fixture('comment_delete_url'),
+            'author_client', 'get', HTTPStatus.OK,
+        ),
+        (
+            pytest.lazy_fixture('comment_edit_url'),
+            'reader_client', 'get', HTTPStatus.NOT_FOUND,
+        ),
+        (
+            pytest.lazy_fixture('comment_delete_url'),
+            'reader_client', 'get', HTTPStatus.NOT_FOUND,
+        ),
+        (
+            pytest.lazy_fixture('comment_edit_url'),
+            'client', 'get', HTTPStatus.FOUND,
+        ),
+        (
+            pytest.lazy_fixture('comment_delete_url'),
+            'client', 'get', HTTPStatus.FOUND,
+        ),
     ),
 )
 def test_status_codes(
