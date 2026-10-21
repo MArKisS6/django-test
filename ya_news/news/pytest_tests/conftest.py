@@ -14,6 +14,10 @@ def enable_db_access_for_all_tests(db):
     """Автоматически разрешает доступ к БД для всех тестов."""
     pass
 
+@pytest.fixture
+def logout_url():
+    """URL страницы выхода."""
+    return reverse('users:logout')
 
 @pytest.fixture
 def news():
