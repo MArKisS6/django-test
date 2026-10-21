@@ -19,8 +19,8 @@ def test_news_count_on_home_page(client, news_bulk):
     url = reverse('news:home')
     response = client.get(url)
     object_list = response.context['object_list']
-    news_count = len(object_list)
-    assert news_count <= settings.NEWS_COUNT_ON_HOME_PAGE
+    news_count = object_list.count()
+    assert news_count == settings.NEWS_COUNT_ON_HOME_PAGE
 
 
 def test_comments_order(client, news, comments):
