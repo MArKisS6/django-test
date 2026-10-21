@@ -1,9 +1,9 @@
-# news/tests/conftest.py
 from datetime import datetime, timedelta
 
 import pytest
 from django.conf import settings
 from django.test.client import Client
+from django.urls import reverse
 from django.utils import timezone
 
 from news.models import Comment, News
@@ -92,3 +92,39 @@ def comments(news, author):
 def form_data():
     """Данные для POST-запроса при создании/редактировании комментария."""
     return {'text': 'Текст комментария'}
+
+
+@pytest.fixture
+def home_url():
+    """URL главной страницы."""
+    return reverse('news:home')
+
+
+@pytest.fixture
+def login_url():
+    """URL страницы входа."""
+    return reverse('users:login')
+
+
+@pytest.fixture
+def signup_url():
+    """URL страницы регистрации."""
+    return reverse('users:signup')
+
+
+@pytest.fixture
+def news_detail_url(news):
+    """URL страницы отдельной новости."""
+    return reverse('news:detail', args=(news.id,))
+
+
+@pytest.fixture
+def comment_edit_url(comment):
+    """URL страницы редактирования комментария."""
+    return reverse('news:edit', args=(comment.id,))
+
+
+@pytest.fixture
+def comment_delete_url(comment):
+    """URL страницы удаления комментария."""
+    return reverse('news:delete', args=(comment.id,))
