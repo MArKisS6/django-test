@@ -30,7 +30,7 @@ def test_pages_availability(client, url):
         (pytest.lazy_fixture('signup_url'), 'client', 'get', HTTPStatus.OK),
         (
             pytest.lazy_fixture('logout_url'),
-            'client', 'post', HTTPStatus.FOUND,
+            'client', 'post', HTTPStatus.OK,
         ),
         (
             pytest.lazy_fixture('comment_edit_url'),
