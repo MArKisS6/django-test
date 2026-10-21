@@ -1,5 +1,3 @@
-from django.test import TestCase
-
 from notes.forms import NoteForm
 
 from .base import BaseTest
